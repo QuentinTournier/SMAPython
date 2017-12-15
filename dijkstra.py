@@ -44,7 +44,27 @@ def dijkstra(grid,start,end):
     current = start.copy()
     path = []
     if gridCopy[current[0]][current[1]] == 0:
-        return -1
+        diffY = end[0] - start[0]
+        diffX = end[1] - start[1]
+        move = 0;
+        if current[0]==end[0] and current[1]==end[1]:
+            return -1
+        
+        if math.fabs(diffX) < math.fabs(diffY):
+            move = int(round( diffY/math.fabs(diffY)))
+            if gridCopy[current[0]][current[1]-move] == 0:
+                move = 0
+            move *= -2
+        else :
+            move = int(round( diffX/math.fabs(diffX)))
+            if gridCopy[current[0]-move][current[1]] == 0:
+                move = 0
+        if move == 0:
+            return -1
+        else :
+            path.append(move)
+            return path
+        
     while current[0]!=end[0] or current[1]!=end[1]:
         path.append(gridCopy[current[0]][current[1]])
         temp = current[0]

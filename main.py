@@ -13,10 +13,11 @@ Created on Mon Oct 16 16:10:10 2017
 -2=bot
 """
 
-nb_agent=5
+nb_agent=15
 n = 5
 grid = [[0 for x in range(n)] for y in range(n)]
 lock = RLock()
+sharedMails = {}
 
 def checkWin() :
     for i in range(nb_agent):
@@ -26,17 +27,13 @@ def checkWin() :
 
 
 class Agent(Thread):
-    def __init__(self, ip, port, ports_lists,key, iniX, iniY, goalX, goalY): 
+    def __init__(self,key, iniX, iniY, goalX, goalY): 
         Thread.__init__(self)
-        self.ip = ip
-        self.port = port
-        self.ports_lists = ports_lists
         self.key = key
         self.posX = iniX
         self.posY = iniY
         self.goalX = goalX
         self.goalY = goalY
-        print("voile")
         with lock :
             grid[self.posY][self.posX] = key
 
@@ -44,8 +41,14 @@ class Agent(Thread):
 
     def run(self):
         global grid
+        global sharedMails
+        sharedMails[self.key] = []
         cont = 0
         while checkWin() == 0 and cont < 30 :
+            if self.key == 1:
+                for i in range(n):
+                    print(grid[i])
+                print("\n")
             if self.posX != self.goalX or self.posY != self.goalY:
                 nextMoves = dijkstra.dijkstra(grid,[self.posY, self.posX], [self.goalY, self.goalX])
                 if nextMoves == -1 :
@@ -65,14 +68,11 @@ class Agent(Thread):
                         self.posY -= 1
                     grid[self.posY][self.posX] = self.key
                 cont +=1
-                for z in range(len(grid)):
-                    print(grid[z])
             time.sleep(1) #seconds
-        print("MOI G FINI, JE MAPEL " + str(self.key))
                     
 agents = [None] * nb_agent
 for i in range(nb_agent) :
-    agent = Agent(0,0,[0,0], i+1,4-i,4,i,0)
+    agent = Agent(i+1,(n-1-i)%n,i//n,(i+1)%n,n-(i//n)-1)
     agents[i] = agent
 for i in range(nb_agent) :
     agents[i].start() 
