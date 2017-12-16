@@ -36,6 +36,7 @@ def getDirectionGrid(grid,start,end):
                         list.clear
                         return gridCopy
                     list.append([current[0]+i,current[1]+j])
+    gridCopy[end[0]][end[1]] = 0                
     return gridCopy
                     
 
@@ -43,27 +44,27 @@ def dijkstra(grid,start,end):
     gridCopy =  getDirectionGrid(grid,start,end)
     current = start.copy()
     path = []
+    possible = 1
     if gridCopy[current[0]][current[1]] == 0:
         diffY = end[0] - start[0]
         diffX = end[1] - start[1]
         move = 0;
         if current[0]==end[0] and current[1]==end[1]:
-            return -1
+            possible = -1
+            return (possible, path)
         
         if math.fabs(diffX) < math.fabs(diffY):
-            move = int(round( diffY/math.fabs(diffY)))
-            if gridCopy[current[0]][current[1]-move] == 0:
-                move = 0
+            move = int(round(diffY/math.fabs(diffY)))
+            if grid[current[0]+move][current[1]] != 0:
+                possible = -1
             move *= -2
         else :
             move = int(round( diffX/math.fabs(diffX)))
-            if gridCopy[current[0]-move][current[1]] == 0:
-                move = 0
-        if move == 0:
-            return -1
-        else :
-            path.append(move)
-            return path
+            if grid[current[0]][current[1]+move] != 0:
+                possible = -1
+            move *= -1
+        path.append(move)
+        return (possible, path)
         
     while current[0]!=end[0] or current[1]!=end[1]:
         path.append(gridCopy[current[0]][current[1]])
@@ -72,7 +73,7 @@ def dijkstra(grid,start,end):
         current[1] = current[1] - int(math.copysign(gridCopy[temp][current[1]]%2,gridCopy[current[0]][current[1]])) 
                
         
-    return path
+    return (possible, path)
 
         
 
