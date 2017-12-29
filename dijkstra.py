@@ -17,7 +17,7 @@ def getDirectionGrid(grid,start,end):
     n = len(grid)
     gridCopy = [[0 for x in range(n)] for y in range(n)]
     gridCopy[end[0]][end[1]] = 10
-    
+
     list = deque([])
     list.append(end)
     while(len(list)>0):
@@ -36,9 +36,9 @@ def getDirectionGrid(grid,start,end):
                         list.clear
                         return gridCopy
                     list.append([current[0]+i,current[1]+j])
-    gridCopy[end[0]][end[1]] = 0                
+    gridCopy[end[0]][end[1]] = 0
     return gridCopy
-                    
+
 
 def dijkstra(grid,start,end):
     gridCopy =  getDirectionGrid(grid,start,end)
@@ -46,35 +46,34 @@ def dijkstra(grid,start,end):
     path = []
     possible = 1
     if gridCopy[current[0]][current[1]] == 0:
-        diffY = end[0] - start[0]
-        diffX = end[1] - start[1]
-        move = 0;
-        if current[0]==end[0] and current[1]==end[1]:
-            possible = -1
-            return (possible, path)
-        
-        if math.fabs(diffX) < math.fabs(diffY):
-            move = int(round(diffY/math.fabs(diffY)))
-            if grid[current[0]+move][current[1]] != 0:
+        while len(path) < 2 :
+            diffY = end[0] - current[0]
+            diffX = end[1] - current[1]
+            move = 0;
+            if current[0]==end[0] and current[1]==end[1]:
                 possible = -1
-            move *= -2
-        else :
-            move = int(round( diffX/math.fabs(diffX)))
-            if grid[current[0]][current[1]+move] != 0:
-                possible = -1
-            move *= -1
-        path.append(move)
+                return (possible, path)
+
+            if math.fabs(diffX) < math.fabs(diffY):
+                move = int(round(diffY/math.fabs(diffY)))
+                if grid[current[0]+move][current[1]] != 0:
+                    possible = -1
+                current[0] += move
+                move *= -2
+            else :
+                move = int(round( diffX/math.fabs(diffX)))
+                if grid[current[0]][current[1]+move] != 0:
+                    possible = -1
+                current[1] += move
+                move *= -1
+            path.append(move)
         return (possible, path)
-        
+
     while current[0]!=end[0] or current[1]!=end[1]:
         path.append(gridCopy[current[0]][current[1]])
         temp = current[0]
         current[0] = current[0] - int(round(gridCopy[temp][current[1]]/3))
-        current[1] = current[1] - int(math.copysign(gridCopy[temp][current[1]]%2,gridCopy[current[0]][current[1]])) 
-               
-        
+        current[1] = current[1] - int(math.copysign(gridCopy[temp][current[1]]%2,gridCopy[current[0]][current[1]]))
+
+
     return (possible, path)
-
-        
-
-
